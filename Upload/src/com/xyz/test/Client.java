@@ -21,7 +21,7 @@ public class Client {
 	}
 
 	static void getCheckCode() {
-		HttpUtil.getCheckcode(new Utility.GetCheckcodeCallBack() {
+		HttpUtil.getCheckCode(new Utility.GetCheckcodeCallBack() {
 			@Override
 			public void doSuccess() {
 				System.out.println("成功获取验证码图片");

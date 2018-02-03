@@ -99,16 +99,17 @@ public  class HandleFile2 {
 			Sheet sheet = wb.getSheetAt(0);
 			int rowCounts = sheet.getLastRowNum();
 			FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-			scores = new double[32];
+			scores = new double[38];//修改学生人数
 			System.out.println("rowcounts:" + rowCounts);
-			for (int i = 2; i < 34; i++) {
+			for (int i = 2; i < 40; i++) {
 				XSSFRow hssfrow = (XSSFRow) sheet.getRow(i);
-				XSSFCell scoreCell = hssfrow.getCell(5);//cellnum为数据源的分数所在的列号，即学生所打的分数
+				XSSFCell scoreCell = hssfrow.getCell(10);//cellnum为数据源的分数所在的列号，即学生所打的分数
 				evaluator.evaluateFormulaCell(scoreCell);
 				scores[i - 2] = scoreCell.getNumericCellValue();
 				System.out.println(scoreCell.getNumericCellValue());
-				XSSFRow hssfrow1 = (XSSFRow) gatherSheet.getRow(i);
-				XSSFCell scoreCell1 = hssfrow1.getCell(Integer.parseInt(fileName) + 3);//目的汇总文件中该分数所应保存的列号
+				//System.out.println("scores["+i+" - 2] "+scores[i - 2] );
+				XSSFRow hssfrow1 = (XSSFRow) gatherSheet.getRow(i);//目的地所在行数
+				XSSFCell scoreCell1 = hssfrow1.getCell(Integer.parseInt(fileName) + 2);//目的汇总文件中该分数所应保存的列号
 				scoreCell1.setCellValue(scores[i - 2]);
 			}
 		} catch (IOException e) {
@@ -125,13 +126,13 @@ public  class HandleFile2 {
 	public static void getScore() {
 
 		try {
-			FileInputStream isDestination = new FileInputStream("file2/Soft1402.xlsx");
+			FileInputStream isDestination = new FileInputStream("file2/d.xlsx");
 			Workbook wbDestination = new XSSFWorkbook(isDestination);
 			Sheet sheetDestination = wbDestination.getSheetAt(0);
 			int rowCountsDestination = sheetDestination.getLastRowNum();
 			String[] stuNames = new String[rowCountsDestination-1];
 
-			FileInputStream isSource = new FileInputStream("file2/all.xlsx");
+			FileInputStream isSource = new FileInputStream("file2/JavaWeb_CS1502.xlsx");
 			Workbook wbSource = new XSSFWorkbook(isSource);
 			Sheet sheetSource = wbSource.getSheetAt(0);
 			FormulaEvaluator evaluator = wbSource.getCreationHelper().createFormulaEvaluator();
@@ -146,11 +147,12 @@ public  class HandleFile2 {
 				for (int j = 2; j <= rowCountsDestination; j++) {
 				    System.out.print("J:"+j);
 					XSSFRow hssfrowSource = (XSSFRow) sheetSource.getRow(j);
-					XSSFCell nameCellSource = hssfrowSource.getCell(3);
-					XSSFCell scoreCellSource = hssfrowSource.getCell(21);
+					XSSFCell nameCellSource = hssfrowSource.getCell(2);
+					XSSFCell scoreCellSource = hssfrowSource.getCell(22);
 					if (stuNames[i - 2].equals(nameCellSource.getStringCellValue().trim())) {
 						evaluator.evaluateFormulaCell(scoreCellSource);
-						scoreCellDestination.setCellValue((int) scoreCellSource.getNumericCellValue());
+						int temp=(int) scoreCellSource.getNumericCellValue();
+						scoreCellDestination.setCellValue(temp);
 						break;
 					}
 				}

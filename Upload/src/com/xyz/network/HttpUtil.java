@@ -34,7 +34,7 @@ public class HttpUtil {
 	private static Map<String, String> cookies = null;
 
 	// 存放viewstate
-	private static String viewstate = null;
+	private static String viewState = null;
 
 	// 学生学号
 	private static String xsxh;
@@ -84,7 +84,7 @@ public class HttpUtil {
 	}
 
 	// 连接后，下载验证码
-	public static void getCheckcode(final Utility.GetCheckcodeCallBack callback) {
+	public static void getCheckCode(final Utility.GetCheckcodeCallBack callback) {
 		new Thread() {
 			@Override
 			public void run() {
@@ -93,14 +93,14 @@ public class HttpUtil {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				System.out.println("getCheckcode执行");
+				System.out.println("get Check code执行");
 				getInstance()._getCheckcode(callback);
 
 			}
 		}.start();
 	}
 
-	// 获得连接，并保存cookie和viewstate在内存中
+	// 获得连接，并保存cookie和viewState在内存中
 	private void _getConnection(Utility.GetConnectionCallBack callback) {
 		try {
 			Connection conn = Jsoup.connect(url_index).timeout(20000).method(Connection.Method.GET);
@@ -112,9 +112,9 @@ public class HttpUtil {
 				callback.connectionError();
 			}
 			Document document = Jsoup.parse(response.body());
-			viewstate = document.select("input").first().attr("value");
+			viewState = document.select("input").first().attr("value");
 
-			System.out.println("viewstate = " + viewstate);
+			System.out.println("viewState = " + viewState);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -125,7 +125,7 @@ public class HttpUtil {
 		try {
 			Connection.Response resultImageResponse = Jsoup.connect(url_checkcode).cookies(cookies)
 					.ignoreContentType(true).execute();
-			File file = new File("file", "checkcode.png");
+			File file = new File("file", "checkCode.png");
 
 			FileOutputStream fos = new FileOutputStream(file);
 			fos.write(resultImageResponse.bodyAsBytes());
@@ -140,7 +140,7 @@ public class HttpUtil {
 
 	// post发送数据登录,并储存教师的姓名、教工号
 	private void _login(final Map<String, String> data, final Utility.LoginCallBack callback) {
-		data.put("__VIEWSTATE", viewstate);
+		data.put("__VIEWSTATE", viewState);
 		data.put("RadioButtonList1", "教师");
 		data.put("Button1", "");
 		Connection conn = Jsoup.connect(url_index).cookies(cookies).header("Origin", "http://jw1.wucc.cn:2222")
@@ -152,9 +152,9 @@ public class HttpUtil {
 				xsxm = Utility.getStudentName(response);
 				System.out.println("教师工号: " + xsxh + ", 教师姓名: " + xsxm);
 				Document document = Jsoup.parse(response.body());
-				viewstate = document.select("input").get(2).attr("value");
+				viewState = document.select("input").get(2).attr("value");
 
-				System.out.println("tea viewstate = " + viewstate);
+				System.out.println("tea viewState = " + viewState);
 
 				callback.loginSuccess();
 			} else {
@@ -202,7 +202,7 @@ public class HttpUtil {
 			Connection.Response response = conn.execute();
 			//System.out.println("body:" + response.body());
 			Document document = Jsoup.parse(response.body());
-			viewstate = document.select("input").get(0).attr("value");
+			viewState = document.select("input").get(0).attr("value");
 			String link1 = document.select("a").get(0).attr("href");
 			String link2 = document.select("a").get(1).attr("href");
 			String link3 = document.select("a").get(2).attr("href");
@@ -240,7 +240,7 @@ public class HttpUtil {
 			Connection.Response response = conn.execute();
 			//System.out.println("body:" + response.body());
 			Document document = Jsoup.parse(response.body());
-			viewstate = document.select("input").get(0).attr("value");
+			viewState = document.select("input").get(0).attr("value");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -256,7 +256,7 @@ public class HttpUtil {
 		Map<String, String> datas = new HashMap<String, String>();
 
 		datas.put("__VIEWSTATE",
-				viewstate);
+				viewState);
 		datas.put("hidLanguage:", "");
 
 		datas.put("txtzgh", "00201091");
@@ -266,7 +266,7 @@ public class HttpUtil {
 		Workbook wb = null;
 		try {
 
-			FileInputStream fis = new FileInputStream("file/course.xlsx");
+			FileInputStream fis = new FileInputStream("UploadFile/course.xlsx");
 			wb = new XSSFWorkbook(fis);
 			sheet = wb.getSheetAt(0);
 		} catch (Exception exception) {
@@ -287,7 +287,7 @@ public class HttpUtil {
 		try {
 			Connection.Response response = conn.execute();
 			String dest = new String(response.bodyAsBytes(), "gb2312");
-			Utility.writeTxtFile(dest, "file/course" + courseId + ".html");
+			Utility.writeTxtFile(dest, "UploadFile/course" + courseId + ".html");
 			Document document = Jsoup.parse(dest);
 			myViewState = document.select("input").get(2).attr("value");
 		} catch (IOException e) {
@@ -317,7 +317,7 @@ public class HttpUtil {
 		FileInputStream fis;
 		Workbook wb = null;
 		try {
-			fis = new FileInputStream("file/course" + courseId + ".xlsx");
+			fis = new FileInputStream("UploadFile/course" + courseId + ".xlsx");
 			wb = new XSSFWorkbook(fis);
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -361,7 +361,7 @@ public class HttpUtil {
 			Connection.Response response = conn.execute();
 
 			String dest = new String(response.bodyAsBytes(), "gb2312");
-			Utility.writeTxtFile(dest, "file/scores" + courseId + ".html");
+			Utility.writeTxtFile(dest, "UploadFile/scores" + courseId + ".html");
 
 		} catch (IOException e) {
 			e.printStackTrace();
